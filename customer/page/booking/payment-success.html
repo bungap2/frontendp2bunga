@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Result</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- Optional: sweetalert2 for notifications -->
+</head>
+<body>
+
+    <!-- Konten halaman bisa disesuaikan -->
+    <h1>Payment Status</h1>
+    <p>Checking payment status...</p>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const orderId = new URLSearchParams(window.location.search).get('order_id');  // Ambil order_id dari URL
+
+            // Kirim request ke backend untuk memeriksa status pembayaran
+            fetch(`https://1ace-182-253-124-143.ngrok-free.app/index.php/payment/status/${orderId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.transaction_status === 'settlement') {
+                        Swal.fire({
+                            title: 'Payment Successful',
+                            text: 'Your payment has been successfully completed.',
+                            icon: 'success',
+                            confirmButtonText: 'OK',
+                        });
+
+                        // Menutup popup jika transaksi berhasil
+                        window.close();  // Jika popup dibuka melalui window.open()
+                    } else {
+                        Swal.fire({
+                            title: 'Payment Pending',
+                            text: 'Your payment is still pending.',
+                            icon: 'warning',
+                            confirmButtonText: 'OK',
+                        });
+                    }
+                })
+                .catch(error => {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'There was an error checking your payment status.',
+                        icon: 'error',
+                        confirmButtonText: 'OK',
+                    });
+                });
+        });
+    </script>
+</body>
+</html>
